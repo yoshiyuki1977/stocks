@@ -1,16 +1,19 @@
+import requests
+from bs4 import BeautifulSoup
+from slacker import Slacker
+import json
 import csv
 import datetime
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
 
+slack = Slacker('xoxb-184320133431-clPkURULNczezerQxW7RmxpI')
 
-#URLの指定
-html = urlopen("https://info.finance.yahoo.co.jp/ranking/?kd=33&mk=1&tm=d&vl=a")
-bsObj = BeautifulSoup(html, "html.parser")
+res = requests.get("https://info.finance.yahoo.co.jp/ranking/?kd=33&mk=1&tm=d&vl=a")
+soup = BeautifulSoup(res.text, 'lxml')
 
-#テーブルを指定
-table = bsObj.findAll("table",{"class":"rankingTable"})[0]
-rows = table.findAll("tr")
+#h2s = soup.find_all("h2")
+
+table = soup.find_all("table", {"class":"rankingTable"})[0]
+rows = table.find_all("tr")
 
 now = datetime.datetime.now()
 #先に年月日を付けたファイルを生成
@@ -27,3 +30,5 @@ try:
         writer.writerow(csvRow)
 finally:
     csvFile.close()
+
+slack.files.upload(f_name, filename="出来高ランキング", filetype="csv", channels="#stock-volume")
