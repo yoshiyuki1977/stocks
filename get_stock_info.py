@@ -5,7 +5,6 @@ import json
 import csv
 import datetime
 
-slack = Slacker('xoxb-184320133431-clPkURULNczezerQxW7RmxpI')
 
 res = requests.get("https://info.finance.yahoo.co.jp/ranking/?kd=33&mk=1&tm=d&vl=a")
 soup = BeautifulSoup(res.text, 'lxml')
